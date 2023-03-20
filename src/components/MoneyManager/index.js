@@ -26,7 +26,7 @@ class MoneyManager extends Component {
     expensesInput: 0,
     titleInput: '',
     amountInput: '',
-    activeId: transactionTypeOptions[0].optionId,
+    activeId: transactionTypeOptions[0].displayText,
     transactionList: [],
   }
 
@@ -55,8 +55,11 @@ class MoneyManager extends Component {
     }
     this.setState(prevState => ({
       transactionList: [...prevState.transactionList, newTransaction],
+      titleInput: '',
+      amountInput: '',
+      activeId: transactionTypeOptions[0].displayText,
     }))
-    if (activeId === 'INCOME') {
+    if (activeId === 'Income') {
       this.setState(prevState => ({
         incomeInput: prevState.incomeInput + parseInt(amountInput),
       }))
@@ -72,11 +75,19 @@ class MoneyManager extends Component {
     }))
   }
 
+  onChangeTitle = event => {
+    this.setState({titleInput: event.target.value})
+  }
+
+  onChangeAmount = event => {
+    this.setState({amountInput: event.target.value})
+  }
+
   deleteTransaction = id => {
     const {transactionList} = this.state
     const filteredTransaction = transactionList.filter(each => each.id === id)
     const filtered = filteredTransaction[0]
-    if (filtered.type === 'INCOME') {
+    if (filtered.type === 'Income') {
       this.setState(prevState => ({
         incomeInput: prevState.incomeInput - parseInt(filtered.amountInput),
       }))
@@ -106,7 +117,7 @@ class MoneyManager extends Component {
             Welcome back to your <span className="account">Money Manager</span>{' '}
           </p>
         </div>
-        <MoneyDetails moneyDetail={this.moneyDetail} />
+        <MoneyDetails balanceInput incomeInput expensesInput />
         <div className="transaction-footer">
           <form className="form-container" onSubmit={this.onAddTransaction}>
             <h1 className="heading2">Add Transaction</h1>
@@ -119,6 +130,7 @@ class MoneyManager extends Component {
               placeholder="TITLE"
               className="input"
               value={titleInput}
+              onChange={this.onChangeTitle}
             />
             <label htmlFor="amount" className="label-text">
               AMOUNT
@@ -129,6 +141,7 @@ class MoneyManager extends Component {
               placeholder="AMOUNT"
               className="input"
               value={amountInput}
+              onChange={this.onChangeAmount}
             />
             <label htmlFor="type" className="label-text">
               TYPE
@@ -141,7 +154,7 @@ class MoneyManager extends Component {
               {transactionTypeOptions.map(eachTransaction => (
                 <option
                   key={eachTransaction.optionId}
-                  value={eachTransaction.optionId}
+                  value={eachTransaction.displayText}
                   className="option"
                 >
                   {eachTransaction.displayText}
